@@ -124,6 +124,8 @@ public class StatisticsController {
 
     // Normalise the server names
     all = service.normaliseServerNames(all);
+    //order the list by date
+    Collections.sort(all, (o1,o2) -> o1.getEventTime().compareTo(o2.getEventTime()));
 
     List<List<ServerLifecycleEvent>> monthlyEvents = new ArrayList<>(12);
     for (int i = 0; i < 12; i++) {
@@ -141,7 +143,7 @@ public class StatisticsController {
 
     List<String> xData = Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
     return new BarChart("Server Availability (By Month)", "Total availability of the C2MON server for the year " + year, "", "Month", xData,
-        "Server Availability (%)", monthlyUptimes);
+            "Server Availability (%)", monthlyUptimes);
   }
 
   /**
@@ -177,21 +179,22 @@ public class StatisticsController {
     for (int i = 0; i < events.size(); i++) {
       ServerLifecycleEvent event = events.get(i);
 
-      if (event.getEventType().equals(LifecycleEventType.STOP) && numServersDown == 0) {
+      if (event.getEventType().equals(LifecycleEventType.STOP.toString()) && numServersDown==0) {
         numServersDown = 1;
       }
 
-      else if (event.getEventType().equals(LifecycleEventType.STOP) && numServersDown == 1) {
+      else if (event.getEventType().equals(LifecycleEventType.STOP.toString()) && numServersDown == 1
+              && i < events.size()-1) {
         numServersDown = 2;
         ServerLifecycleEvent start = events.get(i + 1);
         downtime += start.getEventTime().getTime() - event.getEventTime().getTime();
       }
 
-      else if (event.getEventType().equals(LifecycleEventType.START) && numServersDown == 1) {
+      else if (event.getEventType().equals(LifecycleEventType.START.toString()) && numServersDown == 1) {
         numServersDown = 0;
       }
 
-      else if (event.getEventType().equals(LifecycleEventType.START) && numServersDown == 2) {
+      else if (event.getEventType().equals(LifecycleEventType.START.toString()) && numServersDown == 2) {
         numServersDown = 1;
       }
     }
@@ -229,19 +232,19 @@ public class StatisticsController {
     for (int i = 0; i < events.size(); i++) {
       ServerLifecycleEvent event = events.get(i);
 
-      if (event.getEventType().equals(LifecycleEventType.STOP)) {
+      if (event.getEventType().equals(LifecycleEventType.STOP.toString())) {
         if (i != events.size() - 1) {
           ServerLifecycleEvent next = events.get(i + 1);
 
           // If the next event is a START event and it is the same server, then
           // this is a rolling restart
-          if (next.getEventType().equals(LifecycleEventType.START) && next.getServerName().equals(event.getServerName())) {
+          if (next.getEventType().equals(LifecycleEventType.START.toString()) && next.getServerName().equals(event.getServerName())) {
             numRollingRestarts++;
           }
 
           // If the next event is a STOP event and it is a different server,
           // then this is a service outage
-          else if (next.getEventType().equals(LifecycleEventType.STOP) && !next.getServerName().equals(event.getServerName())) {
+          else if (next.getEventType().equals(LifecycleEventType.STOP.toString()) && !next.getServerName().equals(event.getServerName())) {
             numServiceOutages++;
           }
         }
@@ -330,7 +333,7 @@ public class StatisticsController {
 
     List<String> xData = Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
     return new BarChart("Availability for " + name + " (By Month)", "Total availability of " + name + " for the year " + year, "", "Month", xData,
-        "Availability (%)", monthlyUptimes);
+            "Availability (%)", monthlyUptimes);
   }
 
   /**
