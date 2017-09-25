@@ -124,8 +124,6 @@ public class StatisticsController {
 
     // Normalise the server names
     all = service.normaliseServerNames(all);
-    //order the list by date
-    Collections.sort(all, (o1,o2) -> o1.getEventTime().compareTo(o2.getEventTime()));
 
     List<List<ServerLifecycleEvent>> monthlyEvents = new ArrayList<>(12);
     for (int i = 0; i < 12; i++) {
