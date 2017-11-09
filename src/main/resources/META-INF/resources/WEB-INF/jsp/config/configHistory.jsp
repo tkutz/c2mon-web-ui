@@ -71,7 +71,7 @@ tr {
                     <c:when test="${report.status == 'FAILURE'}">
                       <span class="label label-danger">FAILURE</span>
                     </c:when>
-                    <c:when test="${report.status == 'RESTART'}">
+                    <c:when test="${report.status == 'WARNING' or report.status == 'RESTART'}">
                       <span class="label label-warning">RESTART</span>
                     </c:when>
                     <c:otherwise>
