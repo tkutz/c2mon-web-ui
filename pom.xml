@@ -14,8 +14,8 @@
   <properties>
     <image.base>openjdk:8-jdk</image.base>
     <image.name>c2mon-web-ui</image.name>
-    <registry>gitlab-registry.cern.ch</registry>
-    <repository>c2mon/${image.name}</repository>
+    <registry>registry.hub.docker.com</registry>
+    <repository>cern/${image.name}</repository>
     <c2mon.webhome>/c2mon-web-ui-${project.version}</c2mon.webhome>
     <explodeDir>${project.build.directory}/exploded/</explodeDir>
   </properties>
